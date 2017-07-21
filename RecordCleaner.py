@@ -86,7 +86,8 @@ class rdcleaner:
 
     def sim(self, a, b):
         # String sequence comparison
-        sim_score = SequenceMatcher(None, a, b).ratio()
+        m = SequenceMatcher(None, a, b)
+        sim_score = m.ratio()
 
         # if want to use the full record information
         # average the join date sim score with the name sim score
@@ -102,14 +103,14 @@ class rdcleaner:
 
         if sim_score > self.sim_threshold:
             if sim_score < self.sim_upper_tolerance:
-                print 'Close call!!! sim_score = ', sim_score
+                print 'Found similar - Close call!!! sim_score = ', sim_score
                 print a, self.raw[a]
                 print b, self.raw[b]
                 print
             return True
         else:
             if sim_score > self.sim_lower_tolerance:
-                print 'Close call!!! sim_score = ', sim_score
+                print 'Not similar - Close call!!! sim_score = ', sim_score
                 print a, self.raw[a]
                 print b, self.raw[b]
                 print
@@ -127,6 +128,7 @@ class rdcleaner:
                 for clean_key, clean_value in self.clean.iteritems():
                     # skip the raw entry if found similar record
                     if self.sim(raw_key, clean_key):
+                        #print 'not counting the sim entry: ', raw_key, clean_key
                         self.clean_ct[clean_key] += 1
                         found_sim = True
                         break
